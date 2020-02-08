@@ -12,10 +12,10 @@
   font-size: 28rpx;
   line-height: 40rpx;
   text-align: center;
-  padding-top: 37rpx;
+  margin-top: 37rpx;
 }
 .pyg_category .category_list .category_left .category_left_item:nth-child(1) {
-  padding-top: 27rpx;
+  margin-top: 27rpx;
 }
 .pyg_category .category_list .category_left .active {
   color: var(--themeColor);
@@ -32,8 +32,8 @@
 .pyg_category .category_list .category_right .categories_right_content .category_right_content_title {
   font-size: 26rpx;
   text-align: center;
-  padding-top: 28rpx;
-  padding-bottom: 21rpx;
+  margin-top: 28rpx;
+  margin-bottom: 21rpx;
   color: #636363;
 }
 .pyg_category .category_list .category_right .categories_right_content .category_right_content_item {
