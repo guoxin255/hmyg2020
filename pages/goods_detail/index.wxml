@@ -1,2 +1,31 @@
-<!--pages/goods_detail/index.wxml-->
-<text>pages/goods_detail/index.wxml</text>
+<view class="goods_detail">
+  <!-- 轮播图开始 -->
+  <view class="goods_detail_swiper">
+    <swiper circular="true" indicator-color="true" indicator-dots="true">
+      <swiper-item wx:for="{{goods_detail.pics}}" wx:key="index">
+        <image src="{{item.pics_mid}}"
+        bindtap="handleImageClick"
+        data-pics="{{goods_detail.pics}}"
+        data-current="{{item.pics_mid}}"
+        ></image>
+      </swiper-item>
+    </swiper>
+  </view>
+  <!-- 轮播图结束 -->
+<!-- 商品描述开始 -->
+<view class="goods_detail_desc">
+  <view class="desc1">
+      <view class="price">￥{{goods_detail.goods_price}}</view>
+      <view class="shareAndCollect">
+            <view class="share">
+              <view class="iconfont icon-fenxiang"></view>
+              <button class="default" size="default" open-type="share"></button>
+            </view>
+            <view class="iconfont icon-shoucang"></view>
+      </view>
+  </view>
+
+</view>
+<!-- 商品描述结束 -->
+
+</view>

@@ -1,0 +1,55 @@
+.goods_detail {
+
+    .goods_detail_swiper {
+        swiper {
+            height: 497rpx;
+
+            swiper-item {
+                text-align: center;
+                image {
+                    height: 497rpx;
+                    width: 497rpx;
+                }
+            }
+        }
+    }
+    .goods_detail_desc {
+        .desc1 {
+           height: 50rpx;
+           margin:19rpx 33rpx;
+           display: flex;
+           justify-content: space-between;
+          .price {
+           font-size: 36rpx;
+           color:var(--themeColor);
+           line-height: 50rpx;
+          }
+      
+          .shareAndCollect {
+            display: flex;
+            height: 100%;
+            align-items: center;
+            font-size: 36rpx;
+            .share {
+               position: relative;
+              .iconfont.icon-fenxiang {
+                margin-right: 45rpx;
+              }
+      
+              button {
+                position: absolute;
+                opacity: 0;
+                width: 100%;
+                height: 100%;
+                top:0;
+                left: 0;
+              }
+            }
+      
+            .iconfont.icon-shoucang {
+      
+            }
+          }
+        }
+      }
+}
