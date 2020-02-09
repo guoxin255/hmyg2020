@@ -47,7 +47,7 @@ Page({
     });
     const rightContent = categories[0].children;
     const selectIndex = 0;
-    wx.setStorageSync("carts", {
+    wx.setStorageSync("cate", {
       time:Date.now(),
       data:categories
     })
@@ -66,16 +66,16 @@ Page({
       3. 如果没有过期 直接使用数据
    */
   onShow: function () {
-    let carts = wx.getStorageSync("carts");
-    if(!carts){
+    let cate = wx.getStorageSync("cate");
+    if(!cate){
       this.getCategories();
     }else{
       // 判断一下是否时间过期 10s 
-      if (Date.now() - carts.time > 1000 * 10){
+      if (Date.now() - cate.time > 1000 * 10){
         this.getCategories();
       }else{
         //不过期 同时又请求过数据
-        let categories = carts.data;
+        let categories = cate.data;
         const rightContent = categories[0].children;
         const selectIndex = 0;
         this.setData({
