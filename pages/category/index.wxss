@@ -7,6 +7,7 @@
   width: 182rpx;
   background-color: #f3f3f3;
   float: left;
+  /*  */
 }
 .pyg_category .category_list .category_left .category_left_item {
   font-size: 28rpx;

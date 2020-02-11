@@ -25,9 +25,13 @@ Page({
   onReady: function () {
 
   },
+  //点击左边标题栏
   handleItemClick:function(e){
+    //获取当前标题所在的行数
     const index = e.currentTarget.dataset.index;
+    //设置 右边栏 滚动条的位置 默认是在顶部 值为0
     const scroll_top = 0;
+    //设置当前点击所在的行数以及右边栏的内容
     this.setData({
       rightContent:this.data.categories[index].children,
       selectIndex:index,
@@ -38,7 +42,7 @@ Page({
   1. 每次拿到数据之后，先把数据存在存在缓存里面 storage
   同时设置一下缓存时间
   2. 当下次进来的时候
-    a.如果在有效时间内容，我们就不发请求；
+    a.如果在有效时间内，我们就不发请求；
     b.如果过了时间，那么就再次请求数据
    */
   getCategories: async function(){
@@ -76,7 +80,9 @@ Page({
       }else{
         //不过期 同时又请求过数据
         let categories = cate.data;
+        //设置右边栏的内容
         const rightContent = categories[0].children;
+        //如果页面
         const selectIndex = 0;
         this.setData({
           categories,rightContent,selectIndex
