@@ -1,2 +1,81 @@
-<!--pages/cart/index.wxml-->
-<text>pages/cart/index.wxml</text>
+<!-- 
+ 1.  如果购物车carts 为空 直接渲染空白页面
+ 2.  否则如果购物车不为空 就渲染商品列表以及底部工具栏
+ -->
+<!-- 购物车不为空 直接渲染列表
+ carts.length === 0 =>  false 
+  -->
+<view wx:if="{{carts.length}}">
+
+  <view class="pyg_cart">
+    <!-- 商品列表开始 -->
+    <view class="cart_list">
+      <view class="cart_list_item" wx:for="{{carts}}" wx:key="index">
+        <!-- 图标开始 -->
+        <view class="{{item.checked?'iconfont icon-xuanzhong':'unselected'}} "
+        bindtap="handleCheck"
+        data-goods_id="{{item.goods_id}}"
+        ></view>
+        <!-- 图标结束 -->
+        <!-- 图片开始 -->
+        <view class="image_wrapper">
+          <image src="{{item.goods_small_logo}}"></image>
+        </view>
+        <!-- 图片结束 -->
+        <!-- 商品描述还有商品的增减开始 -->
+        <view class="goods_desc">
+          <!-- 商品的描述开始 -->
+          <view class="goods_desc_title">
+            {{item.goods_name}}
+          </view>
+          <!-- 商品的描述结束 -->
+          <!-- 商品的增减开始 -->
+          <view class="goods_desc_func">
+            <view class="price">￥{{item.goods_price}}</view>
+            <!-- 商品的加减功能区开始 -->
+            <view class="goods_desc_addAndSub">
+              <view class="iconfont icon-iconset0187"></view>
+              <view class="num">{{item.num}}</view>
+              <view class="iconfont icon-54"></view>
+            </view>
+            <!-- 商品的加减功能区结束 -->
+          </view>
+          <!-- 商品的增减结束 -->
+        </view>
+        <!-- 商品描述还有商品的增减结束 -->
+      </view>
+    </view>
+    <!-- 商品列表结束 -->
+    <!-- 底部工具栏开始 -->
+    <view class="tools_set">
+      <!-- 左边工具栏开始 -->
+      <view class="tools_left">
+        <view class="{{allChecked?'iconfont icon-xuanzhong':'unselected'}}" 
+        bindtap="handleAllChecked"
+        ></view>
+        <view class="allSelectText">全选</view>
+        <view class="totalText">合计:</view>
+        <view class="totalPrice">￥{{totalPrice||0}}</view>
+      </view>
+      <!-- 左边工具栏结束 -->
+      <!-- 右边工具栏开始 -->
+      <view class="tools_right">
+        <navigator url="/pages/pay/index">去结算({{totalNum||0}})</navigator>
+      </view>
+      <!-- 右边工具栏结束 -->
+    </view>
+
+    <!-- 底部工具栏结束 -->
+
+  </view>
+</view>
+
+<!-- 购物车为空 直接渲染空白页面 -->
+<view class="pyg_cart_empty" wx:else>
+  <image src="http://hbimg.b0.upaiyun.com/e1b1467beea0a9c7d6a56b32bac6d7e5dcd914f7c3e6-YTwUd6_fw658" mode="widthFix"></image>
+  <view class="empty_text">购物车居然是空的</view>
+  <view class="empty_info">再忙，也记得买点什么犒赏自己~</view>
+  <navigator url="/pages/category/index" open-type="switchTab">
+    <view class="go_shopping">去逛逛</view>
+  </navigator>
+</view>
