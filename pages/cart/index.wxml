@@ -12,10 +12,7 @@
     <view class="cart_list">
       <view class="cart_list_item" wx:for="{{carts}}" wx:key="index">
         <!-- 图标开始 -->
-        <view class="{{item.checked?'iconfont icon-xuanzhong':'unselected'}} "
-        bindtap="handleCheck"
-        data-goods_id="{{item.goods_id}}"
-        ></view>
+        <view class="{{item.checked?'iconfont icon-xuanzhong':'unselected'}} " bindtap="handleCheck" data-goods_id="{{item.goods_id}}"></view>
         <!-- 图标结束 -->
         <!-- 图片开始 -->
         <view class="image_wrapper">
@@ -34,9 +31,14 @@
             <view class="price">￥{{item.goods_price}}</view>
             <!-- 商品的加减功能区开始 -->
             <view class="goods_desc_addAndSub">
-              <view class="iconfont icon-iconset0187"></view>
+              <!-- 
+                点击加减的时候，需要绑定商品信息
+                1. goods_id
+                2.opertaion => 1 或者 -1 
+             -->
+              <view class="iconfont icon-iconset0187" data-goods_id="{{item.goods_id}}" data-operation="{{-1}}" bindtap="handleOperation"></view>
               <view class="num">{{item.num}}</view>
-              <view class="iconfont icon-54"></view>
+              <view class="iconfont icon-54" data-goods_id="{{item.goods_id}}" data-operation="{{1}}" bindtap="handleOperation"></view>
             </view>
             <!-- 商品的加减功能区结束 -->
           </view>
@@ -50,17 +52,23 @@
     <view class="tools_set">
       <!-- 左边工具栏开始 -->
       <view class="tools_left">
-        <view class="{{allChecked?'iconfont icon-xuanzhong':'unselected'}}" 
-        bindtap="handleAllChecked"
-        ></view>
+        <view class="{{allChecked?'iconfont icon-xuanzhong':'unselected'}}" bindtap="handleAllChecked"></view>
         <view class="allSelectText">全选</view>
         <view class="totalText">合计:</view>
         <view class="totalPrice">￥{{totalPrice||0}}</view>
       </view>
       <!-- 左边工具栏结束 -->
       <!-- 右边工具栏开始 -->
-      <view class="tools_right">
+      <!-- 
+          优化逻辑
+          1.如果去结算这里它的商品数量为0 “去结算” 灰掉 不能点击
+           2. 只有 去结算 的数量不为0 才可以跳转到支付页面
+       -->
+      <view class="tools_right" wx:if="{{!!totalNum}}">
         <navigator url="/pages/pay/index">去结算({{totalNum||0}})</navigator>
+      </view>
+      <view wx:else class="tools_right_disable">
+        去结算({{totalNum||0}})
       </view>
       <!-- 右边工具栏结束 -->
     </view>
