@@ -17,7 +17,7 @@
 .pyg_buy .pyg_buy_address .address_all {
   font-size: 30rpx;
   color: #434343;
-  margin: 16rpx 17rpx 18rpx 29rpx;
+  margin: 16rpx 17rpx 18rpx 20rpx;
 }
 .pyg_buy .pyg_buy_address .nameAndPhone {
   margin-left: 29rpx;
