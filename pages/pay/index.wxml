@@ -6,10 +6,10 @@
   <view class="pyg_buy_address">
     <!-- 收货地址存在开始 -->
     <block wx:if="{{address.all}}">
-      <view class="address_all">{{address.all}}</view>
+      <view class="address_all">地址：{{address.all}}</view>
       <view class="nameAndPhone">
-        <text class="name">{{address.userName}}</text>
-        <text class="telNumber">{{address.telNumber}}</text>
+        <text class="name">姓名：{{address.userName}}</text>
+        <text class="telNumber">电话：{{address.telNumber}}</text>
       </view>
               <view class="chooseAnotherAddress" 
                 type="primary"

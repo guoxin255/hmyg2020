@@ -138,6 +138,56 @@ Page({
       totalPrice
     })
   },
+// 获取用户的收货地址
+// wx.chooseAddress 接口
+  handleAddressChoose: async function(e){
+    //捕捉各种获取权限过程中可能出现的异常
+    try{
+      //通过 wx.getSetting获取当前用户拥有的权限
+      //https://developers.weixin.qq.com/miniprogram/dev/api/open-api/setting/wx.getSetting.html
+      const setting = await getSetting();
+    // 判断一下用户有没有获取当前地址的权限 scope.address
+    //打开微信的权限设置 看能不能直接设置地址权限
+      if (!setting.authSetting["scope.address"]){
+        //打开设置授权页面
+        await openSetting();
+      }
+      //获取用户的地址 wx.chooseAddress
+      let address = await chooseAddress();
+      //拼接地址
+      address.all = address.provinceName + address.cityName+address.countyName + address.detailInfo;
+      //存到缓存和 this.data中
+      wx.setStorageSync("address", address);
+      this.setData({
+        address
+      })
+      console.log(address);
+
+      console.log(setting);
+    }catch(e){
+      console.log(e);
+
+    }
+  },
+  //作用 
+  //1. 设置购物小车的值
+  //2. 计算选中商品的价格
+  //3 计算选中商品的数量
+  setCarts:function(carts){
+    let totalNum = 0;//商品的数量
+    let totalPrice = 0;//商品的价格
+    console.log(carts);
+    //对购物小车做循环 找到 checked 为true 的项  把价格和数量相加
+    carts.forEach(v => {
+      if(v.checked){
+        totalNum += v.num;//商品数量总和
+        totalPrice += v.num * v.goods_price;
+      }
+    })
+    this.setData({
+      carts,totalNum,totalPrice
+    })
+  },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
