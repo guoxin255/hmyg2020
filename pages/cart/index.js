@@ -39,8 +39,15 @@ C.totalNum 处理逻辑
 2. 循环carts 找到到 v.checked 为真的 item
 3. totalNum  = sum(v.num) 所有checked 为true
 的商品 的数量 的总和
+****************************************
+handleOperation 处理购物小车的加减逻辑
+1. 当点击 + 的时候，那么就是商品数量+1
+2. 当点击 - 的时候
+   a.目前商品数量大于0，直接减1
+   b.当商品数量等于0，提示用户是否要删除本商品，如果确定，直接
+   删除；如果取消，本操作取消。
  */
-
+import { showModal  } from "../../utils/asyncWx.js"
 
 
 Page({
@@ -76,6 +83,31 @@ Page({
     //获取是空，直接返回空数组
       let carts = wx.getStorageSync("carts")||[];
       this.setCart(carts);
+  },
+  //处理购物小车的加减逻辑
+  handleOperation: async function(e){
+    //获取点击列表的参数 goods_id operation
+    const { goods_id,operation } = e.currentTarget.dataset;
+    //获取一下本地缓存中的购物车信息
+    const carts = wx.getStorageSync("carts");
+    //找一下 点击的商品 在carts中的位置 index
+    const index = carts.findIndex(v => v.goods_id == goods_id);
+    // 加减的操作
+    if(operation == -1 && carts[index].num - 1 === 0){
+      //执行确认操作,这里代表商品数量执行减号之后，变成0
+    //使用 微信 wx.showModal 进行用户确认操作 //https://developers.weixin.qq.com/miniprogram/dev/api/ui/interaction/wx.showModal.html
+      const res = await showModal({
+        content:"您确定要删除商品？"
+      });
+      //确认要删除该商品
+      if (res.confirm){
+        carts.splice(index,1)
+      }
+
+    }else{
+      carts[index].num += operation;
+    }
+    this.setCart(carts);
   },
   // 购物车列表的全选事件
   handleAllChecked:function(e){

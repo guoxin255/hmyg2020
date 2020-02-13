@@ -139,6 +139,18 @@
   border-radius: 26rpx;
   margin-right: 21rpx;
 }
+.pyg_cart .tools_set .tools_right_disable {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 52rpx;
+  width: 150rpx;
+  background-color: #b6b6b6;
+  color: white;
+  font-size: 21rpx;
+  border-radius: 26rpx;
+  margin-right: 21rpx;
+}
 /* 空白购物车样式 */
 .pyg_cart_empty {
   height: 100vh;
