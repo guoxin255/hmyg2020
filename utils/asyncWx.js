@@ -67,3 +67,48 @@ export const chooseAddress = (params) => {
     })
   })
 }
+/* 获取登录凭证  */
+export const login = (params) => {
+  return new Promise(function (resolve, reject) {
+    wx.login({
+      success: (res) => {
+        resolve(res);
+      },
+      fail: (err) => {
+        reject(err);
+      }
+    })
+  })
+}
+/* 
+  微信支付的封装 promise
+ */
+export const requestPayment = (pay) => {
+  return new Promise(function (resolve, reject) {
+    wx.requestPayment({
+      ...pay,
+      success: (res) => {
+        resolve(res);
+      },
+      fail: (err) => {
+        reject(err);
+      }
+    })
+  })
+}
+/* showToast 轻提示封装 */
+export const showToast = (params) => {
+  return new Promise(function (resolve, reject) {
+    wx.showToast({
+      title: params.title,
+      success: (res) => {
+        resolve(res);
+      },
+      fail: (err) => {
+        reject(err);
+      }
+    })
+  })
+}
+
+

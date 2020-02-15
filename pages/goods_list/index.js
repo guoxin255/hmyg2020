@@ -128,7 +128,9 @@ Page({
     this.getGoodsList();
   },
 
-  /**
+  /**handleTabsChange
+   * 
+   * 
    * 页面上拉触底事件的处理函数
    */
   //触底 加载下一页

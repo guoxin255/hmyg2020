@@ -10,10 +10,16 @@ export const request = (params) => {
   wx.showLoading({
     title: '正在加载中',
     mask: true
-  })
+  });
+  //解构 获取参数里面是否有 header 
+  let header = {...params.header};
+  if (params.url.includes("/my/")){
+    header["Authorization"] = wx.getStorageSync("token");
+  }
   return new Promise(function(resolve, reject) {
     wx.request({
       ...params,
+      header:header,
       url: BASE_URL + params.url,
       success: (res) => {
         resolve(res.data.message);

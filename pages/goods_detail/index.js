@@ -26,93 +26,95 @@
 
  */
 
-import { request } from "../../request/request.js"
+import {
+  request
+} from "../../request/request.js"
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    goods_detail:{},//用来存详情信息
-    isCollect:false // 是否被收藏
+    goods_detail: {}, //用来存详情信息
+    isCollect: false // 是否被收藏
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  onLoad: function(options) {
     this.getGoodsInfo(options);
   },
   //处理 点击 加入购物车 的逻辑
-  handleCartAdd:function(e){
+  handleCartAdd: function(e) {
     //先从缓存中获取一下购物车的信息
     // 加一个空的阈值 判断
     let carts = wx.getStorageSync("carts") || [];
     // 通过findIndex 查看一下carts中有没有当前商品的信息
-    let index = carts.findIndex(v=>v.goods_id === this.data.goods_detail.goods_id);
-  //如果是第一次添加的话 那么 index === -1
-  if(index === -1){
-    let goods_detail = this.data.goods_detail;
-    goods_detail.num = 1; //第一次添加商品数量就是1
-    goods_detail.checked = true;// 后面购物小车会用到 作用是在购物小车的界面默认勾选上这个商品
-    // 把商品添加到购物小车中
-    carts.push(goods_detail);
-  }else{
-    // 如果在carts 里面已经存在购物小车信息
-    carts[index].num ++;
-  }
-  //重新把购物车信息添加到缓存中
+    let index = carts.findIndex(v => v.goods_id === this.data.goods_detail.goods_id);
+    //如果是第一次添加的话 那么 index === -1
+    if (index === -1) {
+      let goods_detail = this.data.goods_detail;
+      goods_detail.num = 1; //第一次添加商品数量就是1
+      goods_detail.checked = true; // 后面购物小车会用到 作用是在购物小车的界面默认勾选上这个商品
+      // 把商品添加到购物小车中
+      carts.push(goods_detail);
+    } else {
+      // 如果在carts 里面已经存在购物小车信息
+      carts[index].num++;
+    }
+    //重新把购物车信息添加到缓存中
     wx.setStorageSync("carts", carts);
     //提示用户 商品已经被添加到购物车中了
-    wx.showToast({
-      title: '加入成功',
-      icon:"success",
-      //防止用户乱点 加遮罩
-      mask:true 
-    })
-
-
+    if (!e.pay) {
+      wx.showToast({
+        title: '加入成功',
+        icon: "success",
+        //防止用户乱点 加遮罩
+        mask: true
+      })
+    }
   },
   //定义收藏图标的点击事件
-  handleCollect:function(e){
+  handleCollect: function(e) {
     // 标识商品是否已经被收藏;默认没有被收藏
     let isCollect = false;
     //从本地缓存中找到收藏的商品信息 本地缓存信息（所有商品）=>collect=>数组
     //如果获取到的collect，所有的商品的收藏信息 
     //为了防止一开始初始化的时候，collect为空，我们这里加一个阈值 [] => 空数组
     // collect 所有商品的收藏信息
-    let collect = wx.getStorageSync("collect")||[];
+    let collect = wx.getStorageSync("collect") || [];
     // 判断一下该商品是否在 collect 中有没有被收藏
     // findIndex使用   https://www.runoob.com/jsref/jsref-findindex.html
     let index = collect.findIndex(v => v.goods_id === this.data.goods_detail.goods_id);
     //index 
     //如果collect 数组已经有收藏商品 index就是它所在的下标
     //如果没有的话 index就是-1 
-    if(index != -1 ){
+    if (index != -1) {
       //代表产品之前被收藏过 取消收藏 把商品从collect 中移除
       //splice 移除方法  注意:该方法会修改原数组https://www.runoob.com/jsref/jsref-splice.html
-      collect.splice(index,1);
+      collect.splice(index, 1);
       // 标识一下 这个商品已经被移除收藏
       isCollect = false;
       //温馨提示一下用户 该商品已经移除收藏
       // https://developers.weixin.qq.com/miniprogram/dev/api/ui/interaction/wx.showToast.html
       wx.showToast({
         title: '取消成功',
-        icon:"success",
-        mask:true
+        icon: "success",
+        mask: true
       })
-    }else{
+    } else {
       // 存储到collect 中 this.data.goods_detail 就是返回的商品信息
       collect.push(this.data.goods_detail);
       //同时标识已经被收藏
       isCollect = true;
       wx.showToast({
         title: '收藏成功',
-        icon:"success",
-        mask:true //防止用户乱点 遮罩
+        icon: "success",
+        mask: true //防止用户乱点 遮罩
       })
     }
-   //更新之后的collect 收藏的数组列表 存回本地
+    //更新之后的collect 收藏的数组列表 存回本地
     wx.setStorageSync("collect", collect)
     this.setData({
       isCollect
@@ -120,35 +122,39 @@ Page({
   },
 
   //获取商品的详情信息
-  getGoodsInfo: async function(params){
+  getGoodsInfo: async function(params) {
     // 1. 发送请求 获取产品详情信息
     const goods_detail = await request({
-      url:"/goods/detail",
-      data:params
+      url: "/goods/detail",
+      data: params
     });
     // 获取一下缓存中的商品收藏信息
     let collect = wx.getStorageSync("collect") || [];
     //判断一下 当前产品是否在 collect 中
     // some  https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/some
-    let isCollect = collect.some(v => v.goods_id === goods_detail.goods_id );
+    let isCollect = collect.some(v => v.goods_id === goods_detail.goods_id);
     console.log(isCollect);
     console.log(goods_detail);
     // 设置 产品信息到 data 属性中
     this.setData({
-      goods_detail,isCollect
+      goods_detail,
+      isCollect
     })
   },
   //处理图片的点击预览事件
-  handleImageClick:function(e){
+  handleImageClick: function(e) {
     //打印事件源
     console.log(e);
     //current 当前点击之后的图片信息
     //pics 就是我们预览的图片列表信息
-    const { pics,current } = e.currentTarget.dataset;
+    const {
+      pics,
+      current
+    } = e.currentTarget.dataset;
     //微信提供的 预览图片功能 
-   // 官方文档 https://developers.weixin.qq.com/miniprogram/dev/api/media/image/wx.previewImage.html
+    // 官方文档 https://developers.weixin.qq.com/miniprogram/dev/api/media/image/wx.previewImage.html
     wx.previewImage({
-      current:current,
+      current: current,
       // 遍历接口里的中等大小的图片
       //urls里面是需要预览的图片http链接列表
       // pics.map(v => v.pics_mid)  返回的数据结构 ["xxx.jpg","xxx1.jpg"] 对的结构
@@ -156,52 +162,61 @@ Page({
       urls: pics.map(v => v.pics_mid),
     })
   },
+  //立即购买
+  handleBuy: function() {
+    this.handleCartAdd({
+      pay: true
+    });
+    wx.navigateTo({
+      url: '/pages/pay/index',
+    })
+  },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady: function () {
+  onReady: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow: function () {
+  onShow: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide: function () {
+  onHide: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload: function () {
+  onUnload: function() {
 
   },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh: function () {
+  onPullDownRefresh: function() {
 
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom: function () {
+  onReachBottom: function() {
 
   },
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage: function () {
+  onShareAppMessage: function() {
 
   }
 })

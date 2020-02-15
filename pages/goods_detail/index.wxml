@@ -60,9 +60,9 @@ rich-text https://developers.weixin.qq.com/miniprogram/dev/component/rich-text.h
     </view>
     <!-- 加入购物车结束 -->
     <!-- 立即购买开始 -->
-    <navigator url="/pages/pay/index" class="buy">
-      <view class="text">立即购买</view>
-    </navigator>
+    <view  class="buy">
+      <view class="text" bindtap="handleBuy">立即购买</view>
+    </view>
     <!-- 立即购买结束-->
   </view>
   <!-- 商品工具栏结束 -->

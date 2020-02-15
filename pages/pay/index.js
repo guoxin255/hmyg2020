@@ -33,8 +33,13 @@ https://developers.weixin.qq.com/miniprogram/dev/api/open-api/payment/wx.request
 import {
   getSetting,
   openSetting,
-  chooseAddress
+  chooseAddress,
+  requestPayment,
+  showToast
 } from "../../utils/asyncWx.js"
+import {
+  request
+} from "../../request/request.js"
 Page({
 
   /**
@@ -64,7 +69,92 @@ Page({
     })
   },
   // 处理微信支付的流程
-  handlePay: function(e) {
+  handlePay: async function(e) {
+    try {
+      //1. 获取token => openID 用户的唯一标识
+      let token = wx.getStorageSync("token");
+      //如果本地缓存中没有token,此时我们就需要跳转去授权页面获取token
+      if (!token) {
+        wx.navigateTo({
+          url: '/pages/auth/index',
+        })
+      }
+      //开始支付流程
+      //2. 创建系统订单 
+      //开始拼接创建订单需要的 请求参数
+      let order_price = this.data.totalPrice;
+      let consignee_addr = this.data.address.all;
+      let goods = [];
+      //获取goods 的参数列表
+      this.data.carts.forEach(v => {
+        //判断购物小车是否被选中
+        if (v.checked) {
+          let params = {};
+          params["goods_id"] = v.goods_id;
+          params["goods_number"] = v.num;
+          params["goods_price"] = v.goods_price;
+          goods.push(params);
+        }
+      })
+      //订单的请求参数
+      let order_params = {
+        order_price: order_price,
+        consignee_addr: consignee_addr,
+        goods: goods
+      }
+      //创建订单
+      const {
+        order_number
+      } = await request({
+        url: "/my/orders/create",
+        method: "post",
+        data: order_params
+      });
+      // console.log(order_number);
+      //3. 获取支付参数
+      const {
+        pay
+      } = await request({
+        url: "/my/orders/req_unifiedorder",
+        method: "POST",
+        data: {
+          order_number
+        }
+      });
+      //console.log(pay);
+      // 4.发起支付 wx.requestPayment //https://developers.weixin.qq.com/miniprogram/dev/api/open-api/payment/wx.requestPayment.html 
+      //https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=9_1
+      await requestPayment(pay);
+      //5. 查询一下订单状态
+      let res = await request({
+        url: "/my/orders/chkOrder",
+        method: "post",
+        data: {
+          order_number
+        }
+      });
+      //提示用户 支付成功
+      await showToast({
+        title:"支付成功"
+      });
+      //6 手动删除已经支付的商品信息
+      let newCarts = wx.getStorageSync("carts")||[];
+      //!v.checked 没有被选中支付的商品
+      newCarts = newCarts.filter(v=>!v.checked)
+      //设置回本地缓存
+      wx.setStorageSync("carts", newCarts);
+      //7. 跳转到订单页面
+      wx.navigateTo({
+        url: '/pages/order/index',
+      })
+
+    } catch (e) {
+      console.log(e);
+      //提示用户 支付失败
+      showToast({
+        title:"支付失败"
+      })
+    }
 
   },
   //重新选择地址
@@ -138,24 +228,24 @@ Page({
       totalPrice
     })
   },
-// 获取用户的收货地址
-// wx.chooseAddress 接口
-  handleAddressChoose: async function(e){
+  // 获取用户的收货地址
+  // wx.chooseAddress 接口
+  handleAddressChoose: async function(e) {
     //捕捉各种获取权限过程中可能出现的异常
-    try{
+    try {
       //通过 wx.getSetting获取当前用户拥有的权限
       //https://developers.weixin.qq.com/miniprogram/dev/api/open-api/setting/wx.getSetting.html
       const setting = await getSetting();
-    // 判断一下用户有没有获取当前地址的权限 scope.address
-    //打开微信的权限设置 看能不能直接设置地址权限
-      if (!setting.authSetting["scope.address"]){
+      // 判断一下用户有没有获取当前地址的权限 scope.address
+      //打开微信的权限设置 看能不能直接设置地址权限
+      if (!setting.authSetting["scope.address"]) {
         //打开设置授权页面
         await openSetting();
       }
       //获取用户的地址 wx.chooseAddress
       let address = await chooseAddress();
       //拼接地址
-      address.all = address.provinceName + address.cityName+address.countyName + address.detailInfo;
+      address.all = address.provinceName + address.cityName + address.countyName + address.detailInfo;
       //存到缓存和 this.data中
       wx.setStorageSync("address", address);
       this.setData({
@@ -164,7 +254,7 @@ Page({
       console.log(address);
 
       console.log(setting);
-    }catch(e){
+    } catch (e) {
       console.log(e);
 
     }
@@ -173,19 +263,21 @@ Page({
   //1. 设置购物小车的值
   //2. 计算选中商品的价格
   //3 计算选中商品的数量
-  setCarts:function(carts){
-    let totalNum = 0;//商品的数量
-    let totalPrice = 0;//商品的价格
+  setCarts: function(carts) {
+    let totalNum = 0; //商品的数量
+    let totalPrice = 0; //商品的价格
     console.log(carts);
     //对购物小车做循环 找到 checked 为true 的项  把价格和数量相加
     carts.forEach(v => {
-      if(v.checked){
-        totalNum += v.num;//商品数量总和
+      if (v.checked) {
+        totalNum += v.num; //商品数量总和
         totalPrice += v.num * v.goods_price;
       }
     })
     this.setData({
-      carts,totalNum,totalPrice
+      carts,
+      totalNum,
+      totalPrice
     })
   },
 
