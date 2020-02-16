@@ -5,13 +5,28 @@ Page({
    * 页面的初始数据
    */
   data: {
-
+    userInfo:{} //用户信息
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    //从storage里面获取用户的信息
+    let userInfo = wx.getStorageSync("userInfo")||{};
+    this.setData({
+      userInfo
+    })
+  },
+  //获取用户信息
+  handleGetUserInfo:function(e){
+    console.log(e);
+    //1. 放到this.data中
+    this.setData({
+      userInfo:e.detail.userInfo
+    })
+    //2. 存到 storage中 页面初始化的时候 可以获取
+    wx.setStorageSync("userInfo", e.detail.userInfo);
 
   },
 
