@@ -36,7 +36,9 @@ Page({
         // tempFilePath可以作为img标签的src属性显示图片
         // const tempFilePaths = res.tempFilePaths
         this.setData({
+
           chooseImages: [...this.data.chooseImages,...res.tempFilePaths]
+
         })
       }
     })
